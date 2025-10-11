@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deaifish.excel2db.mapper.LanguageMapper">
+    <resultMap id="LanguageMapper" type="com.deaifish.excel2db.bean.LanguagePO">
+        <id property="id" column="id"/>
+        <result property="chinese" column="chinese"/>
+        <result property="other" column="other"/>
+        <result property="sqbm" column="sqbm"/>
+    </resultMap>
+    <!-- 其他配置 -->
+    <insert id="saveAll">
+        insert into zd_language (id, chinese, other, sqbm) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.id}, #{item.chinese}, #{item.other}, #{item.sqbm})
+        </foreach>
+    </insert>
+    <update id="updateSqbm">
+        update zd_language
+        set sqbm = '-1'
+        where sqbm != '-1'
+    </update>
+    <update id="backupData">
+        create table ${tableName} as
+        select *
+        from zd_language
+    </update>
+
+    <delete id="removeDuplicates">
+        DELETE zd_language
+        FROM zd_language
+                 INNER JOIN (SELECT chinese,
+                                    sqbm,
+                                    MAX(updated_at) AS maxupdated_at,
+                                    MAX(ID)         AS maxidformaxupdated_at,
+                                    COUNT(1)
+                             FROM zd_language
+                             GROUP BY chinese
+                             HAVING COUNT(*) > 1) AS duplicates ON zd_language.chinese = duplicates.chinese
+        WHERE zd_language.updated_at != duplicates.maxupdated_at
+           OR (zd_language.updated_at = duplicates.maxupdated_at AND
+               zd_language.ID != duplicates.maxidformaxupdated_at);
+    </delete>
+
+    <select id="getMaxId" resultType="java.lang.Integer">
+        select max(id) from zd_language
+    </select>
+</mapper>

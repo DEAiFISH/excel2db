@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deaifish.excel2db.mapper.QkzlmbaMapper">
+    <resultMap id="QkzlmbaMapper" type="com.deaifish.excel2db.bean.QkzlmbaPO">
+        <id property="sysid" column="SYSID"/>
+        <result property="dh" column="DH"/>
+        <result property="mc" column="MC"/>
+        <result property="state" column="STATE"/>
+        <result property="zdlx" column="ZDLX"/>
+        <result property="bm" column="BM"/>
+        <result property="fCqjkwt" column="F_CQJKWT"/>
+        <result property="fcrb" column="FCRB"/>
+    </resultMap>
+    <!-- 其他配置 -->
+    <insert id="saveAll">
+        insert into zd_qkzlmba (SYSID, DH, MC, STATE, ZDLX, BM, F_CQJKWT, FCRB) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.sysid}, #{item.dh}, #{item.mc}, #{item.state}, #{item.zdlx}, #{item.bm}, #{item.fCqjkwt}, #{item.fcrb})
+        </foreach>
+    </insert>
+    <update id="updateQybm">
+        update zd_qkzlmba set qybm = -1 where qybm != -1
+    </update>
+    <update id="backupData">
+        create table ${tableName} as select * from zd_qkzlmba
+    </update>
+
+    <delete id="removeDuplicates">
+        DELETE zd_qkzlmba
+        FROM zd_qkzlmba
+                 INNER JOIN (SELECT mc,
+                                    bm,
+                                    zdlx,
+                                    count(1)        AS num,
+                                    max(updated_at) AS maxupdated_at,
+                                    max(SYSID)      AS maxidformaxupdated_at
+                             FROM zd_qkzlmba q
+                             GROUP BY mc,
+                                      bm,
+                                      zdlx
+                             HAVING num > 1) AS duplicates ON zd_qkzlmba.mc = duplicates.mc
+            AND duplicates.bm = zd_qkzlmba.bm
+            AND duplicates.zdlx = zd_qkzlmba.zdlx
+        WHERE zd_qkzlmba.updated_at != duplicates.maxupdated_at
+           OR (zd_qkzlmba.updated_at = duplicates.maxupdated_at AND
+               zd_qkzlmba.SYSID != duplicates.maxidformaxupdated_at)
+    </delete>
+
+    <select id="getMaxId" resultType="java.lang.Integer">
+        select max(SYSID) from zd_qkzlmba
+    </select>
+</mapper>
