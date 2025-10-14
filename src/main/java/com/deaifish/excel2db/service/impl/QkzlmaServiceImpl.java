@@ -13,12 +13,11 @@ import com.deaifish.excel2db.service.Excel2DBService;
 import com.deaifish.excel2db.util.ExcelUtil;
 import com.deaifish.excel2db.util.PinYinUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,20 +39,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class QkzlmaServiceImpl implements Excel2DBService<QkzlmbaPO>, ApplicationListener<ApplicationReadyEvent> {
     private final QkzlmbaMapper qkzlmbaMapper;
     private final Excel2DBConfig excel2DBConfig;
     private final ApplicationContext applicationContext;
-
-    @Lazy
-    @Autowired
-    private Excel2DBServiceFactory serviceFactory;
-
-    public QkzlmaServiceImpl(QkzlmbaMapper qkzlmbaMapper, Excel2DBConfig excel2DBConfig, ApplicationContext applicationContext) {
-        this.qkzlmbaMapper = qkzlmbaMapper;
-        this.excel2DBConfig = excel2DBConfig;
-        this.applicationContext = applicationContext;
-    }
+    private final Excel2DBServiceFactory serviceFactory;
 
     /**
      * 在应用完全启动后注册到工厂
@@ -123,7 +114,6 @@ public class QkzlmaServiceImpl implements Excel2DBService<QkzlmbaPO>, Applicatio
 
         File tempFile = null;
         List<QkzlmbaPO> poList = new ArrayList<>();
-        AtomicInteger id = new AtomicInteger(qkzlmbaMapper.getMaxId());
         try {
             // 将MultipartFile转换为临时文件
             tempFile = ExcelUtil.convertToFile(file);
@@ -167,7 +157,7 @@ public class QkzlmaServiceImpl implements Excel2DBService<QkzlmbaPO>, Applicatio
         // 备份数据
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String backupTableName = "zd_qkzlmba_" + currentDate + "_back_up";
-        qkzlmbaMapper.backupData(backupTableName);
+//        qkzlmbaMapper.backupData(backupTableName);
 
         log.info("开始导入Excel文件");
         List<QkzlmbaPO> dataList = readExcel(file);

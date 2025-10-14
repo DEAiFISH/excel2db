@@ -13,12 +13,11 @@ import com.deaifish.excel2db.mapper.LanguageMapper;
 import com.deaifish.excel2db.service.Excel2DBService;
 import com.deaifish.excel2db.util.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,21 +39,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class LanguageServiceImpl implements Excel2DBService<LanguagePO>, ApplicationListener<ApplicationReadyEvent> {
 
     private final Excel2DBConfig excel2DBConfig;
     private final LanguageMapper languageMapper;
     private final ApplicationContext applicationContext;
-
-    @Lazy
-    @Autowired
-    private Excel2DBServiceFactory serviceFactory;
-
-    public LanguageServiceImpl(Excel2DBConfig excel2DBConfig, LanguageMapper languageMapper, ApplicationContext applicationContext) {
-        this.excel2DBConfig = excel2DBConfig;
-        this.languageMapper = languageMapper;
-        this.applicationContext = applicationContext;
-    }
+    private final Excel2DBServiceFactory serviceFactory;
 
     /**
      * 在应用完全启动后注册到工厂
