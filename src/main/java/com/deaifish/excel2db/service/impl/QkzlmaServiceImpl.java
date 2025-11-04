@@ -157,7 +157,7 @@ public class QkzlmaServiceImpl implements Excel2DBService<QkzlmbaPO>, Applicatio
         // 备份数据
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String backupTableName = "zd_qkzlmba_" + currentDate + "_back_up";
-//        qkzlmbaMapper.backupData(backupTableName);
+        qkzlmbaMapper.backupData(backupTableName);
 
         log.info("开始导入Excel文件");
         List<QkzlmbaPO> dataList = readExcel(file);

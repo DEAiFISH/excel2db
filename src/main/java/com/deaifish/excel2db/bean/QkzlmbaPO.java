@@ -57,5 +57,10 @@ public class QkzlmbaPO extends BasePO{
      */
     @ExcelProperty("是否传染病")
     private String fcrb = "1";
+    /**
+     * 备注
+     */
+    @ExcelProperty("备注")
+    private String remark;
 
 }

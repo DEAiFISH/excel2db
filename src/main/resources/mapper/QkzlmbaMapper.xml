@@ -14,9 +14,9 @@
     </resultMap>
     <!-- 其他配置 -->
     <insert id="saveAll">
-        insert into zd_qkzlmba (SYSID, DH, MC, STATE, ZDLX, BM, F_CQJKWT, FCRB) values
+        insert into zd_qkzlmba (SYSID, DH, MC, STATE, ZDLX, BM, F_CQJKWT, FCRB, REMARK) values
         <foreach item="item" index="index" collection="list" separator=",">
-            (#{item.sysid}, #{item.dh}, #{item.mc}, #{item.state}, #{item.zdlx}, #{item.bm}, #{item.fCqjkwt}, #{item.fcrb})
+            (#{item.sysid}, #{item.dh}, #{item.mc}, #{item.state}, #{item.zdlx}, #{item.bm}, #{item.fCqjkwt}, #{item.fcrb}, #{item.remark})
         </foreach>
     </insert>
     <update id="updateQybm">
